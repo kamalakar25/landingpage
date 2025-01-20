@@ -114,6 +114,12 @@ const products = [
     name: "Violence Symbols",
     image: "https://casemonkey.in/wp-content/uploads/2022/09/248-CMMSKIN.webp",
   },
+  {
+    id: 20,
+    name: "Skins Legend",
+    image:
+      "https://www.skinslegend.com/cdn/shop/products/1opch3JHy2Nkzacihvs4G94EKkCsjg9qu_991a9148-47f6-42a6-b7db-db0f70a3013d.jpg?v=1692797753&width=600",
+  },
   // {
   //   id: 20,
   //   name: "Marvel",
