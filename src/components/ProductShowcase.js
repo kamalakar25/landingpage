@@ -209,6 +209,7 @@ function ProductShowcase() {
                   bgcolor: "white",
                   borderRadius: 3,
                   height: "100%",
+
                   display: "flex",
                   flexDirection: "column",
                   boxShadow: 4,
@@ -227,6 +228,7 @@ function ProductShowcase() {
                   sx={{
                     borderTopLeftRadius: 12,
                     borderTopRightRadius: 12,
+                    paddingTop: "30px",
                     transition: "transform 0.3s ease",
                     "&:hover": {
                       transform: "scale(1.05)",
