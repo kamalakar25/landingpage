@@ -215,7 +215,6 @@ function ProductShowcase() {
                   bgcolor: "white",
                   borderRadius: 3,
                   height: "100%",
-
                   display: "flex",
                   flexDirection: "column",
                   boxShadow: 4,
@@ -231,10 +230,19 @@ function ProductShowcase() {
                   height="400"
                   image={product.image}
                   alt={product.name}
+                  style={{
+                    height: '400px',
+                    paddingTop: '25px',
+                    objectFit: "contain",
+                    transition: "transform 0.3s ease",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                    },
+                    
+                  }}
                   sx={{
                     borderTopLeftRadius: 12,
                     borderTopRightRadius: 12,
-                    paddingTop: "30px",
                     transition: "transform 0.3s ease",
                     "&:hover": {
                       transform: "scale(1.05)",

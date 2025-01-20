@@ -255,7 +255,7 @@ function Header() {
             <Typography variant="h6" sx={{ color: "white" }}>
               Menu
             </Typography>
-            <IconButton color="inherit" onClick={toggleDrawer(false)}>
+            <IconButton color="inherit" onClick={toggleDrawer(false)} style={{width: "80px"}}>
               <CloseIcon />
             </IconButton>
           </Box>
