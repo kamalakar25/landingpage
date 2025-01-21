@@ -25,10 +25,10 @@ function Footer() {
         {/* Brand Section */}
         <Grid item xs={12} md={4}>
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            // initial={{ opacity: 0, x: -50 }}
+            // whileInView={{ opacity: 1, x: 0 }}
+            // transition={{ duration: 0.8 }}
+            // viewport={{ once: true }}
           >
             <Typography
               variant="h6"
@@ -53,10 +53,10 @@ function Footer() {
         {/* Contact Section */}
         <Grid item xs={12} md={4}>
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            // initial={{ opacity: 0, y: 50 }}
+            // whileInView={{ opacity: 1, y: 0 }}
+            // transition={{ duration: 0.8 }}
+            // viewport={{ once: true }}
           >
             <Typography
               variant="h6"
@@ -89,10 +89,10 @@ function Footer() {
         {/* Social Media Section */}
         <Grid item xs={12} md={4}>
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            // initial={{ opacity: 0, x: 50 }}
+            // whileInView={{ opacity: 1, x: 0 }}
+            // transition={{ duration: 0.8 }}
+            // viewport={{ once: true }}
           >
             <Typography
               variant="h6"
@@ -146,10 +146,10 @@ function Footer() {
       {/* Footer Links */}
       <Box mt={4} textAlign="center">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+          // initial={{ opacity: 0, y: 30 }}
+          // whileInView={{ opacity: 1, y: 0 }}
+          // transition={{ duration: 0.8 }}
+          // viewport={{ once: true }}
         >
           <Typography variant="body2">
             © {new Date().getFullYear()}{" "}

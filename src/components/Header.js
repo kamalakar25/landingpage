@@ -9,33 +9,33 @@ import {
   List,
   ListItem,
   ListItemText,
-  
   Box,
   Container,
-
   Paper,
- 
 } from "@mui/material";
-import {
-  MenuIcon,
-
-  DoorClosedIcon as CloseIcon,
-  ChevronDown,
-} from "lucide-react";
+import { MenuIcon, DoorClosedIcon as CloseIcon, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
   const [activeMenuItem, setActiveMenuItem] = useState(null);
 
-  // Mock search results
-  const mockProducts = [
-    { id: 1, name: "iPhone 14 Pro Case", category: "Cases" },
-    { id: 2, name: "Samsung S23 Cover", category: "Covers" },
-    { id: 3, name: "iPad Mini Case", category: "Tablets" },
-    { id: 4, name: "AirPods Case", category: "Accessories" },
+  const { logout } = useAuth();
+  const history = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    history("/login");
+  };
+
+  const menuItems = [
+    { name: "Shop", submenu: ["New Arrivals", "Best Sellers", "Collections", "Customized"] },
+    { name: "Devices", submenu: ["iPhone", "Samsung", "iPad", "AirPods"] },
+    { name: "About" },
+    { name: "Contact" },
   ];
 
   useEffect(() => {
@@ -46,37 +46,8 @@ function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // const handleSearch = (query) => {
-  //   setSearchQuery(query);
-  //   if (query.length > 0) {
-  //     const filtered = mockProducts.filter((product) =>
-  //       product.name.toLowerCase().includes(query.toLowerCase())
-  //     );
-  //     setSearchResults(filtered);
-  //   } else {
-  //     setSearchResults([]);
-  //   }
-  // };
-
-  const menuItems = [
-    {
-      name: "Shop",
-      submenu: ["New Arrivals", "Best Sellers", "Collections", "Customized"],
-    },
-    {
-      name: "Devices",
-      submenu: ["iPhone", "Samsung", "iPad", "AirPods"],
-    },
-    { name: "About" },
-    { name: "Contact" },
-  ];
-
   const toggleDrawer = (open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
+    if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
     }
     setDrawerOpen(open);
@@ -84,17 +55,11 @@ function Header() {
 
   return (
     <>
-      <motion.div
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 120 }}
-      >
+      <motion.div initial={{ y: -100 }} animate={{ y: 0 }} transition={{ type: "spring", stiffness: 120 }}>
         <AppBar
           position="fixed"
           sx={{
-            background: isScrolled
-              ? "rgba(37, 38, 64, 0.9)"
-              : "rgba(37, 38, 64, 0)",
+            background: isScrolled ? "rgba(37, 38, 64, 0.9)" : "rgba(37, 38, 64, 0)",
             backdropFilter: isScrolled ? "blur(10px)" : "none",
             boxShadow: isScrolled ? "0 4px 30px rgba(0, 0, 0, 0.1)" : "none",
             transition: "all 0.3s ease",
@@ -103,10 +68,7 @@ function Header() {
           <Container maxWidth="xl">
             <Toolbar sx={{ py: 1, justifyContent: "space-between" }}>
               {/* Logo */}
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Typography
                   variant="h5"
                   component="div"
@@ -209,17 +171,23 @@ function Header() {
                 ))}
               </Box>
 
-              {/* Search and Cart */}
+              {/* Right Menu */}
               <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              
+                {/* Logout Button */}
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={handleLogout}
+                  sx={{
+                    display: { xs: "none", md: "inline-flex" },
+                  }}
+                >
+                  Logout
+                </Button>
 
                 {/* Mobile Menu Button */}
                 <Box sx={{ display: { xs: "block", md: "none" } }}>
-                  <IconButton
-                    color="inherit"
-                    onClick={toggleDrawer(true)}
-                    sx={{ ml: 1 }}
-                  >
+                  <IconButton color="inherit" onClick={toggleDrawer(true)} sx={{ ml: 1 }}>
                     <MenuIcon />
                   </IconButton>
                 </Box>
@@ -255,7 +223,7 @@ function Header() {
             <Typography variant="h6" sx={{ color: "white" }}>
               Menu
             </Typography>
-            <IconButton color="inherit" onClick={toggleDrawer(false)} style={{width: "80px"}}>
+            <IconButton color="inherit" onClick={toggleDrawer(false)}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -277,11 +245,7 @@ function Header() {
                 {item.submenu && (
                   <List sx={{ pl: 2 }}>
                     {item.submenu.map((subItem) => (
-                      <ListItem
-                        button
-                        key={subItem}
-                        onClick={toggleDrawer(false)}
-                      >
+                      <ListItem button key={subItem} onClick={toggleDrawer(false)}>
                         <ListItemText
                           primary={subItem}
                           sx={{ color: "rgba(255, 255, 255, 0.7)" }}
