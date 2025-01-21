@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from "react";
 import {
   AppBar,
-  Toolbar,
-  Typography,
+  Box,
   Button,
-  IconButton,
+  Container,
   Drawer,
+  IconButton,
   List,
   ListItem,
   ListItemText,
-  Box,
-  Container,
   Paper,
-} from "@mui/material";
-import { MenuIcon, DoorClosedIcon as CloseIcon, ChevronDown } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+  Toolbar,
+  Typography,
+} from '@mui/material';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  ChevronDown,
+  DoorClosedIcon as CloseIcon,
+  MenuIcon,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -28,26 +32,33 @@ function Header() {
 
   const handleLogout = () => {
     logout();
-    history("/login");
+    history('/login');
   };
 
   const menuItems = [
-    { name: "Shop", submenu: ["New Arrivals", "Best Sellers", "Collections", "Customized"] },
-    { name: "Devices", submenu: ["iPhone", "Samsung", "iPad", "AirPods"] },
-    { name: "About" },
-    { name: "Contact" },
+    {
+      name: 'Shop',
+      submenu: ['New Arrivals', 'Best Sellers', 'Collections', 'Customized'],
+    },
+    { name: 'Devices', submenu: ['iPhone', 'Samsung', 'iPad', 'AirPods'] },
+    { name: 'About' },
+    { name: 'Contact' },
   ];
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const toggleDrawer = (open) => (event) => {
-    if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+    if (
+      event &&
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
       return;
     }
     setDrawerOpen(open);
@@ -55,29 +66,38 @@ function Header() {
 
   return (
     <>
-      <motion.div initial={{ y: -100 }} animate={{ y: 0 }} transition={{ type: "spring", stiffness: 120 }}>
+      <motion.div
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: 'spring', stiffness: 120 }}
+      >
         <AppBar
-          position="fixed"
+          position='fixed'
           sx={{
-            background: isScrolled ? "rgba(37, 38, 64, 0.9)" : "rgba(37, 38, 64, 0)",
-            backdropFilter: isScrolled ? "blur(10px)" : "none",
-            boxShadow: isScrolled ? "0 4px 30px rgba(0, 0, 0, 0.1)" : "none",
-            transition: "all 0.3s ease",
+            background: isScrolled
+              ? 'rgba(37, 38, 64, 0.9)'
+              : 'rgba(37, 38, 64, 0)',
+            backdropFilter: isScrolled ? 'blur(10px)' : 'none',
+            boxShadow: isScrolled ? '0 4px 30px rgba(0, 0, 0, 0.1)' : 'none',
+            transition: 'all 0.3s ease',
           }}
         >
-          <Container maxWidth="xl">
-            <Toolbar sx={{ py: 1, justifyContent: "space-between" }}>
+          <Container maxWidth='xl'>
+            <Toolbar sx={{ py: 1, justifyContent: 'space-between' }}>
               {/* Logo */}
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Typography
-                  variant="h5"
-                  component="div"
+                  variant='h5'
+                  component='div'
                   sx={{
                     flexGrow: 1,
-                    fontWeight: "bold",
-                    background: "linear-gradient(45deg, #7B68EE, #FF69B4)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
+                    fontWeight: 'bold',
+                    background: 'linear-gradient(45deg, #7B68EE, #FF69B4)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
                   }}
                 >
                   MobileCover
@@ -88,8 +108,8 @@ function Header() {
               <Box
                 sx={{
                   flexGrow: 1,
-                  display: { xs: "none", md: "flex" },
-                  justifyContent: "center",
+                  display: { xs: 'none', md: 'flex' },
+                  justifyContent: 'center',
                   gap: 4,
                 }}
               >
@@ -98,14 +118,14 @@ function Header() {
                     key={item.name}
                     onMouseEnter={() => setActiveMenuItem(item.name)}
                     onMouseLeave={() => setActiveMenuItem(null)}
-                    sx={{ position: "relative" }}
+                    sx={{ position: 'relative' }}
                   >
                     <motion.div whileHover={{ y: -2 }}>
                       <Button
                         sx={{
-                          color: "white",
-                          display: "flex",
-                          alignItems: "center",
+                          color: 'white',
+                          display: 'flex',
+                          alignItems: 'center',
                           gap: 0.5,
                         }}
                       >
@@ -124,10 +144,10 @@ function Header() {
                             exit={{ opacity: 0, y: 20 }}
                             transition={{ duration: 0.2 }}
                             style={{
-                              position: "absolute",
-                              top: "100%",
-                              left: "50%",
-                              transform: "translateX(-50%)",
+                              position: 'absolute',
+                              top: '100%',
+                              left: '50%',
+                              transform: 'translateX(-50%)',
                               zIndex: 1000,
                             }}
                           >
@@ -135,9 +155,9 @@ function Header() {
                               sx={{
                                 mt: 1,
                                 p: 1,
-                                background: "rgba(37, 38, 64, 0.95)",
-                                backdropFilter: "blur(10px)",
-                                border: "1px solid rgba(255, 255, 255, 0.1)",
+                                background: 'rgba(37, 38, 64, 0.95)',
+                                backdropFilter: 'blur(10px)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
                                 minWidth: 200,
                               }}
                             >
@@ -146,15 +166,15 @@ function Header() {
                                   key={subItem}
                                   whileHover={{ x: 5 }}
                                   transition={{
-                                    type: "spring",
+                                    type: 'spring',
                                     stiffness: 300,
                                   }}
                                 >
                                   <Button
                                     fullWidth
                                     sx={{
-                                      justifyContent: "flex-start",
-                                      color: "white",
+                                      justifyContent: 'flex-start',
+                                      color: 'white',
                                       py: 1,
                                     }}
                                   >
@@ -172,22 +192,26 @@ function Header() {
               </Box>
 
               {/* Right Menu */}
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 {/* Logout Button */}
                 <Button
-                  variant="outlined"
-                  color="error"
+                  variant='outlined'
+                  color='error'
                   onClick={handleLogout}
                   sx={{
-                    display: { xs: "none", md: "inline-flex" },
+                    display: { xs: 'none', md: 'inline-flex' },
                   }}
                 >
                   Logout
                 </Button>
 
                 {/* Mobile Menu Button */}
-                <Box sx={{ display: { xs: "block", md: "none" } }}>
-                  <IconButton color="inherit" onClick={toggleDrawer(true)} sx={{ ml: 1 }}>
+                <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                  <IconButton
+                    color='inherit'
+                    onClick={toggleDrawer(true)}
+                    sx={{ ml: 1 }}
+                  >
                     <MenuIcon />
                   </IconButton>
                 </Box>
@@ -199,31 +223,31 @@ function Header() {
 
       {/* Mobile Drawer */}
       <Drawer
-        anchor="right"
+        anchor='right'
         open={drawerOpen}
         onClose={toggleDrawer(false)}
         PaperProps={{
           sx: {
-            width: "100%",
+            width: '100%',
             maxWidth: 350,
-            background: "rgba(37, 38, 64, 0.98)",
-            backdropFilter: "blur(10px)",
+            background: 'rgba(37, 38, 64, 0.98)',
+            backdropFilter: 'blur(10px)',
           },
         }}
       >
         <Box sx={{ p: 2 }}>
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
               mb: 2,
             }}
           >
-            <Typography variant="h6" sx={{ color: "white" }}>
+            <Typography variant='h6' sx={{ color: 'white' }}>
               Menu
             </Typography>
-            <IconButton color="inherit" onClick={toggleDrawer(false)}>
+            <IconButton color='inherit' onClick={toggleDrawer(false)} style={{width: "80px"}}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -239,16 +263,20 @@ function Header() {
                     }
                   }}
                 >
-                  <ListItemText primary={item.name} sx={{ color: "white" }} />
+                  <ListItemText primary={item.name} sx={{ color: 'white' }} />
                   {item.submenu && <ChevronDown size={16} />}
                 </ListItem>
                 {item.submenu && (
                   <List sx={{ pl: 2 }}>
                     {item.submenu.map((subItem) => (
-                      <ListItem button key={subItem} onClick={toggleDrawer(false)}>
+                      <ListItem
+                        button
+                        key={subItem}
+                        onClick={toggleDrawer(false)}
+                      >
                         <ListItemText
                           primary={subItem}
-                          sx={{ color: "rgba(255, 255, 255, 0.7)" }}
+                          sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
                         />
                       </ListItem>
                     ))}
@@ -256,6 +284,9 @@ function Header() {
                 )}
               </React.Fragment>
             ))}
+            <ListItem button onClick={handleLogout}>
+              <ListItemText primary='Logout' sx={{ color: 'white' }} />
+            </ListItem>
           </List>
         </Box>
       </Drawer>

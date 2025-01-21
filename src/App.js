@@ -1,14 +1,19 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import theme from "./theme";
-import { AuthProvider } from "./contexts/AuthContext";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import MobileCoverLandingPage from "./MobileCoverLandingPage";
-import AuthenticatedRoute from "./components/AuthenticatedRoute";
-
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
+import React from 'react';
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from 'react-router-dom';
+import AuthenticatedRoute from './components/AuthenticatedRoute';
+import Login from './components/Login';
+import ProductDetail from './components/ProductDetail';
+import Signup from './components/Signup';
+import { AuthProvider } from './contexts/AuthContext';
+import MobileCoverLandingPage from './MobileCoverLandingPage';
+import theme from './theme';
 
 function App() {
   return (
@@ -17,19 +22,27 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/signup' element={<Signup />} />
             {/* Protect the root route */}
             <Route
-              path="/"
+              path='/'
               element={
                 <AuthenticatedRoute>
                   <MobileCoverLandingPage />
                 </AuthenticatedRoute>
               }
             />
+            <Route
+              path='/product/:productId'
+              element={
+                <AuthenticatedRoute>
+                  <ProductDetail />
+                </AuthenticatedRoute>
+              }
+            />
             {/* Redirect any unmatched routes */}
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path='*' element={<Navigate to='/' />} />
           </Routes>
         </Router>
       </AuthProvider>
