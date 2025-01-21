@@ -8,10 +8,12 @@ import {
   Box,
 } from "@mui/material";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import { products } from "./product";
 
 function ProductShowcase() {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -20,9 +22,13 @@ function ProductShowcase() {
     }, 2000);
   }, []);
 
+  const handleCardClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   return (
     <Box
-      id="productshowcase" // Add an id to target this section for scrolling
+      id="productShowcase" // Added id for the scroll target
       sx={{
         py: 4,
         px: 2,
@@ -58,6 +64,7 @@ function ProductShowcase() {
                   viewport={{ once: true }}
                 >
                   <Card
+                    onClick={() => handleCardClick(product.id)}
                     sx={{
                       bgcolor: "transparent",
                       borderRadius: 3,
