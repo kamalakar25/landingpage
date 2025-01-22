@@ -12,6 +12,8 @@ import {
   Rating,
   IconButton,
   Dialog,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { ArrowBack, Favorite } from "@mui/icons-material";
@@ -21,6 +23,10 @@ import MultiStepCheckoutForm from "./multi-step-checkout-form";
 function ProductDetail() {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isXsScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isLargeScreen = useMediaQuery("(min-width:2000px)");
+
   const product = products.find(
     (prod) => prod.id === Number.parseInt(productId)
   );
@@ -36,24 +42,42 @@ function ProductDetail() {
   }
 
   return (
-    <Container maxWidth="lg">
+    <Container
+      maxWidth={false}
+      sx={{
+        maxWidth: isLargeScreen ? "1800px" : "lg",
+        px: { xs: 2, sm: 3, md: 4, lg: 6 },
+      }}
+      style={{
+        minHeight: "100vh",
+        alignContent: "center"
+      }}
+    >
       <Box
         component={motion.div}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
         sx={{
-          py: 4,
-          px: { xs: 2, md: 4 },
+          py: { xs: 2, sm: 3, md: 4 },
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
-        <IconButton onClick={() => navigate(-1)} sx={{ mb: 2 }} color="primary">
-          <ArrowBack />
-        </IconButton>
+        <Box sx={{ width: "100%", mb: 2 }}>
+          <IconButton onClick={() => navigate(-1)} color="primary">
+            <ArrowBack />
+          </IconButton>
+        </Box>
 
-        <Grid container spacing={4}>
+        <Grid
+          container
+          spacing={{ xs: 2, sm: 3, md: 4 }}
+          justifyContent="center"
+        >
           {/* Left Column - Image */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} lg={5}>
             <Paper
               elevation={6}
               sx={{
@@ -86,14 +110,14 @@ function ProductDetail() {
                   width: "100%",
                   height: "auto",
                   objectFit: "contain",
-                  maxHeight: 500,
+                  maxHeight: { xs: 300, sm: 400, md: 500 },
                 }}
               />
             </Paper>
           </Grid>
 
           {/* Right Column - Product Details */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} lg={5}>
             <Box>
               <Typography
                 variant="h3"
@@ -101,6 +125,7 @@ function ProductDetail() {
                 sx={{
                   fontWeight: 700,
                   mb: 2,
+                  fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem" },
                   background:
                     "linear-gradient(45deg, #BB86FC 30%, #03DAC6 90%)",
                   WebkitBackgroundClip: "text",
@@ -129,7 +154,11 @@ function ProductDetail() {
               <Typography
                 variant="h4"
                 color="primary"
-                sx={{ mb: 3, fontWeight: 600 }}
+                sx={{
+                  mb: 3,
+                  fontWeight: 600,
+                  fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
+                }}
               >
                 ₹{product.price || "Price not available"}
               </Typography>
@@ -149,9 +178,9 @@ function ProductDetail() {
                   variant="contained"
                   color="primary"
                   size="large"
+                  fullWidth
                   onClick={() => setOpenCheckout(true)}
                   sx={{
-                    flex: 2,
                     py: 1.5,
                     borderRadius: 2,
                     boxShadow: "0 4px 6px rgba(187, 134, 252, 0.25)",
@@ -173,7 +202,7 @@ function ProductDetail() {
                     "Bubble Free",
                     "Perfect Fit",
                   ].map((feature, index) => (
-                    <Grid item xs={6} key={index}>
+                    <Grid item xs={6} sm={3} key={index}>
                       <Paper
                         elevation={1}
                         sx={{
@@ -200,6 +229,13 @@ function ProductDetail() {
         onClose={() => setOpenCheckout(false)}
         maxWidth="md"
         fullWidth
+        PaperProps={{
+          sx: {
+            width: isXsScreen ? "100%" : "auto",
+            m: isXsScreen ? 0 : 2,
+            maxHeight: isXsScreen ? "100%" : "calc(100% - 64px)",
+          },
+        }}
       >
         <MultiStepCheckoutForm
           product={{

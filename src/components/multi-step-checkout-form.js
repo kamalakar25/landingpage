@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Check,
   CreditCard,
-  LocalShipping
+  LocalShipping,
+  ErrorOutline,
 } from "@mui/icons-material";
 import {
   Button,
@@ -22,6 +23,7 @@ import {
   Divider,
   useTheme,
   useMediaQuery
+  
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
@@ -130,13 +132,13 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-//   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  //   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   // Validation patterns
   const patterns = {
     name: /^[a-zA-Z\s]{2,50}$/,
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    phone: /^[\d]{10}$/,
+    phone: /^[6-9]\d{9}$/,
     zipCode: /^[\d]{6}$/,
     cardNumber: /^[\d]{16}$/,
     cardExpiry: /^(0[1-9]|1[0-2])\/([0-9]{2})$/,
@@ -147,7 +149,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
   const errorMessages = {
     name: "Name should contain only letters and spaces (2-50 characters)",
     email: "Please enter a valid email address",
-    phone: "Phone number must be 10 digits",
+    phone: "Phone number must be 10 digits and  Start with 6, 7, 8, 9",
     address: "Address is required (minimum 10 characters)",
     city: "City is required",
     state: "State is required",
@@ -189,6 +191,14 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
       );
     }
 
+    // Add validation for step 2
+    if (stepNumber === 2) {
+      if (!formData.paymentMethod) {
+        newErrors.paymentMethod = "Please select a payment method";
+        isValid = false;
+      }
+    }
+
     if (stepNumber === 3 && formData.paymentMethod === "card") {
       ["cardNumber", "cardExpiry", "cardCvc"].forEach((field) => {
         const error = validateField(field, formData[field]);
@@ -203,13 +213,16 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
     return isValid;
   };
 
+  // Update handleNext function to include step 2 validation:
   const handleNext = () => {
-    if (validateStep(step)) {
-      setDirection(1);
-      setStep((prev) => prev + 1);
-    }
-  };
+    if (step === 1 && !validateStep(1)) return;
+    if (step === 2 && !validateStep(2)) return;
+    if (step === 3 && formData.paymentMethod === "card" && !validateStep(3))
+      return;
 
+    setDirection(1);
+    setStep((prev) => prev + 1);
+  };
   const handleBack = () => {
     setDirection(-1);
     setStep((prev) => prev - 1);
@@ -487,18 +500,21 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
             {step === 2 && (
               <motion.div variants={fadeInUp}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                  <Typography
-                    variant="h5"
-                    gutterBottom
-                    style={{ color: "white" }}
-                  >
+                  <Typography variant="h5" gutterBottom>
                     Payment Method
                   </Typography>
-                  <FormControl component="fieldset">
+                  <FormControl
+                    component="fieldset"
+                    error={!!errors.paymentMethod}
+                  >
                     <RadioGroup
                       name="paymentMethod"
                       value={formData.paymentMethod}
-                      onChange={handleInputChange}
+                      onChange={(e) => {
+                        handleInputChange(e);
+                        // Clear payment method error when selection is made
+                        setErrors((prev) => ({ ...prev, paymentMethod: "" }));
+                      }}
                     >
                       <motion.div
                         whileHover={{ scale: 1.02 }}
@@ -512,6 +528,10 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                             "&:hover": {
                               bgcolor: "action.hover",
                             },
+                            border: errors.paymentMethod ? "1px solid" : "none",
+                            borderColor: errors.paymentMethod
+                              ? "error.main"
+                              : "transparent",
                           }}
                         >
                           <FormControlLabel
@@ -551,6 +571,10 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                             "&:hover": {
                               bgcolor: "action.hover",
                             },
+                            border: errors.paymentMethod ? "1px solid" : "none",
+                            borderColor: errors.paymentMethod
+                              ? "error.main"
+                              : "transparent",
                           }}
                         >
                           <FormControlLabel
@@ -580,6 +604,28 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                         </Paper>
                       </motion.div>
                     </RadioGroup>
+                    {errors.paymentMethod && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Box
+                          sx={{
+                            mt: 2,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            color: "error.main",
+                          }}
+                        >
+                          <ErrorOutline fontSize="small" />
+                          <Typography variant="caption" color="error">
+                            {errors.paymentMethod}
+                          </Typography>
+                        </Box>
+                      </motion.div>
+                    )}
                   </FormControl>
                 </Box>
               </motion.div>

@@ -45,7 +45,7 @@ function Footer() {
               variant='body2'
               sx={{ lineHeight: 1.8, textAlign: 'center' }}
             >
-              Elevating device protection since 2023.
+              Elevating device protection since 2025.
             </Typography>
           </motion.div>
         </Grid>
@@ -75,7 +75,7 @@ function Footer() {
             >
               <br />
               Phone:{' '}
-              <Link href='tel:+1234567890' color='inherit'>
+              <Link color='inherit'>
                 +91 98765 78765
               </Link>
             </Typography>
