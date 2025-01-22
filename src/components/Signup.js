@@ -1,23 +1,31 @@
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { TextField, Button, Typography, Link, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import AuthLayout from './AuthLayout';
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { TextField, Button, Typography, Link, Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import AuthLayout from "./AuthLayout";
 
 const schema = yup.object().shape({
-  name: yup.string().required('Name is required'),
-  email: yup.string().email('Invalid email').required('Email is required'),
-  password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
-  confirmPassword: yup.string()
-    .oneOf([yup.ref('password'), null], 'Passwords must match')
-    .required('Confirm Password is required'),
+  name: yup.string().required("Name is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .min(6, "Password must be at least 6 characters"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Confirm Password is required"),
 });
 
-const Signup = () => {
-  const { control, handleSubmit, formState: { errors } } = useForm({
+export default function Signup() {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -28,7 +36,7 @@ const Signup = () => {
     // In a real application, you would send this data to your backend
     // For this example, we'll just simulate a successful signup
     login({ email: data.email, name: data.name });
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -36,7 +44,12 @@ const Signup = () => {
       <Typography component="h1" variant="h4" gutterBottom>
         Sign Up
       </Typography>
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1, width: '100%' }}>
+      <Box
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+        sx={{ mt: 1, width: "100%" }}
+      >
         <Controller
           name="name"
           control={control}
@@ -119,7 +132,7 @@ const Signup = () => {
         >
           Sign Up
         </Button>
-        <Box sx={{ textAlign: 'center' }}>
+        <Box sx={{ textAlign: "center" }}>
           <Link href="/login" variant="body2">
             {"Already have an account? Log In"}
           </Link>
@@ -127,6 +140,4 @@ const Signup = () => {
       </Box>
     </AuthLayout>
   );
-};
-
-export default Signup;
+}
