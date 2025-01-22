@@ -3,8 +3,7 @@ import { Grid, Typography, Box } from "@mui/material";
 import {
   Favorite,
   LocalShipping,
-  Brush,
-  SupportAgent,
+  Brush
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 
