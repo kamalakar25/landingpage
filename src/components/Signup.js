@@ -36,9 +36,19 @@ const schema = yup.object().shape({
     .email("Please enter a valid email address")
     .required("Email is required")
     .test("is-valid-domain", "Please use a valid email domain", (value) => {
+      if (!value) return false;
       const domain = value.split("@")[1];
+      if (!domain) return false;
+
+      const domainParts = domain.split(".");
+      if (domainParts.length < 2) return false; // Ensure both domain and TLD are present
+
+      const topLevelDomain = domainParts[domainParts.length - 1];
       return (
-        domain && !domain.startsWith("example.") && !domain.endsWith(".test")
+        !domain.startsWith("example.") &&
+        !domain.endsWith(".test") &&
+        /^[a-zA-Z.-]+$/.test(domain) && // Allow alphanumeric, dots, and hyphens in domain
+        topLevelDomain.length >= 2 // Ensure the TLD is at least 2 characters long
       );
     }),
   password: yup
