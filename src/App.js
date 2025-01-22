@@ -22,11 +22,11 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            <Route path='/login' element={<Login />} />
-            <Route path='/signup' element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             {/* Protect the root route */}
             <Route
-              path='/'
+              path="/"
               element={
                 <AuthenticatedRoute>
                   <MobileCoverLandingPage />
@@ -34,7 +34,7 @@ function App() {
               }
             />
             <Route
-              path='/product/:productId'
+              path="/product/:productId"
               element={
                 <AuthenticatedRoute>
                   <ProductDetail />
@@ -42,7 +42,7 @@ function App() {
               }
             />
             {/* Redirect any unmatched routes */}
-            <Route path='*' element={<Navigate to='/' />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Router>
       </AuthProvider>
