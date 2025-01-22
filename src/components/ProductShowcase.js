@@ -28,7 +28,7 @@ function ProductShowcase() {
 
   return (
     <Box
-      id="productShowcase" // Added id for the scroll target
+      id="productshowcase" // Added id for the scroll target
       sx={{
         py: 4,
         px: 2,
@@ -48,7 +48,11 @@ function ProductShowcase() {
       >
         Trending Designs
       </Typography>
-      <Grid container spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
+      <Grid
+        container
+        spacing={2}
+        sx={{ display: "flex", justifyContent: "center" }}
+      >
         {isLoading
           ? [1, 2, 3, 4].map((_, index) => (
               <Grid item xs={12} sm={6} md={2} key={index}>

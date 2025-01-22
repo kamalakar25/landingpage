@@ -92,9 +92,10 @@ function HeroSection() {
           </Typography>
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
             <Link
-              to="productshowcase" // Scrolls to the element with id 'productshowcase'
-              smooth={true} // Smooth scroll
-              duration={500} // Animation duration
+              to="productshowcase" // Target the element with id="productshowcase"
+              smooth={true} // Enable smooth scroll
+              duration={500} // Set the duration for the scroll effect
+              offset={-70} // Optional: Adjust the scroll position slightly to account for fixed headers, if needed
             >
               <Button
                 variant="contained"
