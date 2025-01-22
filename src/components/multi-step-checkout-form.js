@@ -285,16 +285,65 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
           sx={{
             mb: 4,
             display: { xs: "none", sm: "flex" },
+            backgroundColor: "rgba(0, 0, 0, 0.8)", // Dark background for desktop stepper
+            borderRadius: "8px", // Rounded corners
+            padding: 2, // Add padding for spacing
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow for depth
           }}
         >
           <Step>
-            <StepLabel>Details</StepLabel>
+            <StepLabel
+              sx={{
+                color: "white", // Label text color
+                "& .MuiStepIcon-root": {
+                  color: step > 0 ? "cyan" : "gray", // Active/inactive icon colors
+                },
+                "& .MuiStepIcon-text": {
+                  fill: "black", // Text inside step icon
+                },
+                "& .MuiStepLabel-label": {
+                  color: step > 0 ? "cyan" : "gray", // Active/inactive label color
+                },
+              }}
+            >
+              Details
+            </StepLabel>
           </Step>
           <Step>
-            <StepLabel>Payment</StepLabel>
+            <StepLabel
+              sx={{
+                color: "white",
+                "& .MuiStepIcon-root": {
+                  color: step > 1 ? "cyan" : "gray",
+                },
+                "& .MuiStepIcon-text": {
+                  fill: "black",
+                },
+                "& .MuiStepLabel-label": {
+                  color: step > 1 ? "cyan" : "gray",
+                },
+              }}
+            >
+              Payment
+            </StepLabel>
           </Step>
           <Step>
-            <StepLabel>Confirm</StepLabel>
+            <StepLabel
+              sx={{
+                color: "white",
+                "& .MuiStepIcon-root": {
+                  color: step > 2 ? "cyan" : "gray",
+                },
+                "& .MuiStepIcon-text": {
+                  fill: "black",
+                },
+                "& .MuiStepLabel-label": {
+                  color: step > 2 ? "cyan" : "gray",
+                },
+              }}
+            >
+              Confirm
+            </StepLabel>
           </Step>
         </Stepper>
 
@@ -303,10 +352,18 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
           sx={{
             display: { xs: "flex", sm: "none" },
             justifyContent: "center",
+            alignItems: "center",
             mb: 3,
+            padding: 2,
+            backgroundColor: "rgba(0, 0, 0, 0.8)", // Dark background for mobile indicator
+            borderRadius: "8px", // Rounded corners
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+            color: "white", // Text color for readability
           }}
         >
-          <Typography variant="h6">Step {step} of 3</Typography>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Step {step} of 3
+          </Typography>
         </Box>
 
         <AnimatePresence mode="wait" custom={direction}>
@@ -328,7 +385,11 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                     gap: { xs: 2, sm: 3 },
                   }}
                 >
-                  <Typography variant="h5" gutterBottom>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    style={{ color: "white" }}
+                  >
                     Personal Details
                   </Typography>
                   <TextField
@@ -426,7 +487,11 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
             {step === 2 && (
               <motion.div variants={fadeInUp}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                  <Typography variant="h5" gutterBottom>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    style={{ color: "white" }}
+                  >
                     Payment Method
                   </Typography>
                   <FormControl component="fieldset">
@@ -523,7 +588,11 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
             {step === 3 && formData.paymentMethod === "card" && (
               <motion.div variants={fadeInUp}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                  <Typography variant="h5" gutterBottom>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    style={{ color: "white" }}
+                  >
                     Card Details
                   </Typography>
                   <TextField
@@ -577,7 +646,11 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
             {step === 3 && formData.paymentMethod === "cod" && (
               <motion.div variants={fadeInUp}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                  <Typography variant="h5" gutterBottom>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    style={{ color: "white" }}
+                  >
                     Confirm Order
                   </Typography>
                   <Paper sx={{ p: { xs: 2, sm: 3 } }}>
@@ -632,7 +705,11 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                       <Check sx={{ fontSize: { xs: 30, sm: 40 } }} />
                     </Box>
                   </motion.div>
-                  <Typography variant="h5" gutterBottom>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    style={{ color: "white" }}
+                  >
                     Order Confirmed!
                   </Typography>
                   <Typography color="text.secondary" paragraph>
