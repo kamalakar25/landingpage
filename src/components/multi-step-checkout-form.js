@@ -1,11 +1,6 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Check,
-  CreditCard,
-  LocalShipping,
-  ErrorOutline,
-} from "@mui/icons-material";
+import React, { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Check, CreditCard, LocalShipping, ErrorOutline } from "@mui/icons-material"
 import {
   Button,
   CardContent,
@@ -22,10 +17,9 @@ import {
   Paper,
   Divider,
   useTheme,
-  useMediaQuery
-  
-} from "@mui/material";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+  useMediaQuery,
+} from "@mui/material"
+import { ThemeProvider, createTheme } from "@mui/material/styles"
 
 // Enhanced dark theme
 const darkTheme = createTheme({
@@ -68,7 +62,7 @@ const darkTheme = createTheme({
       },
     },
   },
-});
+})
 
 // Animation variants
 const pageVariants = {
@@ -97,7 +91,7 @@ const pageVariants = {
       damping: 20,
     },
   }),
-};
+}
 
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
@@ -109,11 +103,11 @@ const fadeInUp = {
       ease: [0.6, -0.05, 0.01, 0.99],
     },
   },
-};
+}
 
 export default function MultiStepCheckoutForm({ product, onClose }) {
-  const [step, setStep] = useState(1);
-  const [direction, setDirection] = useState(0);
+  const [step, setStep] = useState(1)
+  const [direction, setDirection] = useState(0)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -123,16 +117,16 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
     state: "",
     zipCode: "",
     paymentMethod: "",
+    cardType: "",
     cardNumber: "",
     cardExpiry: "",
     cardCvc: "",
-  });
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
+  })
+  const [errors, setErrors] = useState({})
+  const [touched, setTouched] = useState({})
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  //   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
 
   // Validation patterns
   const patterns = {
@@ -143,13 +137,13 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
     cardNumber: /^[\d]{16}$/,
     cardExpiry: /^(0[1-9]|1[0-2])\/([0-9]{2})$/,
     cardCvc: /^[\d]{3,4}$/,
-  };
+  }
 
   // Error messages
   const errorMessages = {
     name: "Name should contain only letters and spaces (2-50 characters)",
     email: "Please enter a valid email address",
-    phone: "Phone number must be 10 digits and  Start with 6, 7, 8, 9",
+    phone: "Phone number must be 10 digits and start with 6, 7, 8, or 9",
     address: "Address is required (minimum 10 characters)",
     city: "City is required",
     state: "State is required",
@@ -157,80 +151,90 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
     cardNumber: "Card number must be 16 digits",
     cardExpiry: "Invalid expiry date (MM/YY)",
     cardCvc: "CVC must be 3 or 4 digits",
-  };
+  }
 
   const validateField = (name, value) => {
-    if (!value)
-      return `${name.charAt(0).toUpperCase() + name.slice(1)} is required`;
+    if (!value) return `${name.charAt(0).toUpperCase() + name.slice(1)} is required`
     if (patterns[name] && !patterns[name].test(value.replace(/\s/g, ""))) {
-      return errorMessages[name];
+      return errorMessages[name]
     }
-    if (name === "address" && value.length < 10) return errorMessages.address;
-    return "";
-  };
+    if (name === "address" && value.length < 10) return errorMessages.address
+    if (name === "cardExpiry") {
+      const [month, year] = value.split("/")
+      const expiryDate = new Date(2000 + Number.parseInt(year), Number.parseInt(month) - 1)
+      if (expiryDate <= new Date()) {
+        return "Expiry date must be in the future"
+      }
+    }
+    return ""
+  }
 
   const handleBlur = (field) => {
-    setTouched((prev) => ({ ...prev, [field]: true }));
-    const error = validateField(field, formData[field]);
-    setErrors((prev) => ({ ...prev, [field]: error }));
-  };
+    setTouched((prev) => ({ ...prev, [field]: true }))
+    const error = validateField(field, formData[field])
+    setErrors((prev) => ({ ...prev, [field]: error }))
+  }
 
   const validateStep = (stepNumber) => {
-    const newErrors = {};
-    let isValid = true;
+    const newErrors = {}
+    let isValid = true
 
     if (stepNumber === 1) {
-      ["name", "email", "phone", "address", "city", "state", "zipCode"].forEach(
-        (field) => {
-          const error = validateField(field, formData[field]);
-          if (error) {
-            newErrors[field] = error;
-            isValid = false;
-          }
+      ;["name", "email", "phone", "address", "city", "state", "zipCode"].forEach((field) => {
+        const error = validateField(field, formData[field])
+        if (error) {
+          newErrors[field] = error
+          isValid = false
         }
-      );
+      })
     }
 
-    // Add validation for step 2
     if (stepNumber === 2) {
       if (!formData.paymentMethod) {
-        newErrors.paymentMethod = "Please select a payment method";
-        isValid = false;
+        newErrors.paymentMethod = "Please select a payment method"
+        isValid = false
       }
     }
 
     if (stepNumber === 3 && formData.paymentMethod === "card") {
-      ["cardNumber", "cardExpiry", "cardCvc"].forEach((field) => {
-        const error = validateField(field, formData[field]);
-        if (error) {
-          newErrors[field] = error;
-          isValid = false;
-        }
-      });
+      if (!formData.cardType) {
+        newErrors.cardType = "Please select a card type"
+        isValid = false
+      }
     }
 
-    setErrors(newErrors);
-    return isValid;
-  };
+    if (stepNumber === 4 && formData.paymentMethod === "card") {
+      ;["cardNumber", "cardExpiry", "cardCvc"].forEach((field) => {
+        const error = validateField(field, formData[field])
+        if (error) {
+          newErrors[field] = error
+          isValid = false
+        }
+      })
+    }
 
-  // Update handleNext function to include step 2 validation:
+    setErrors(newErrors)
+    return isValid
+  }
+
   const handleNext = () => {
-    if (step === 1 && !validateStep(1)) return;
-    if (step === 2 && !validateStep(2)) return;
-    if (step === 3 && formData.paymentMethod === "card" && !validateStep(3))
-      return;
+    if (step === 1 && !validateStep(1)) return
+    if (step === 2 && !validateStep(2)) return
+    if (step === 3 && formData.paymentMethod === "card" && !validateStep(3)) return
+    if (step === 4 && formData.paymentMethod === "card" && !validateStep(4)) return
 
-    setDirection(1);
-    setStep((prev) => prev + 1);
-  };
+    setDirection(1)
+    setStep((prev) => prev + 1)
+  }
+
   const handleBack = () => {
-    setDirection(-1);
-    setStep((prev) => prev - 1);
-  };
+    setDirection(-1)
+    setStep((prev) => prev - 1)
+  }
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    let formattedValue = value;
+    const { name, value } = e.target
+    let formattedValue = value
 
     // Format specific fields
     switch (name) {
@@ -238,34 +242,78 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
         formattedValue = value
           .replace(/\s/g, "")
           .replace(/(\d{4})/g, "$1 ")
-          .trim();
-        break;
+          .trim()
+        break
       case "cardExpiry":
         formattedValue = value
           .replace(/\D/g, "")
           .replace(/(\d{2})(\d)/, "$1/$2")
-          .slice(0, 5);
-        break;
+          .slice(0, 5)
+        break
       case "phone":
-        formattedValue = value.replace(/\D/g, "").slice(0, 10);
-        break;
+        formattedValue = value.replace(/\D/g, "").slice(0, 10)
+        break
       case "zipCode":
-        formattedValue = value.replace(/\D/g, "").slice(0, 6);
-        break;
+        formattedValue = value.replace(/\D/g, "").slice(0, 6)
+        break
       default:
-        break;
+        break
     }
 
     setFormData((prev) => ({
       ...prev,
       [name]: formattedValue,
-    }));
+    }))
 
     if (touched[name]) {
-      const error = validateField(name, formattedValue);
-      setErrors((prev) => ({ ...prev, [name]: error }));
+      const error = validateField(name, formattedValue)
+      setErrors((prev) => ({ ...prev, [name]: error }))
     }
-  };
+  }
+
+  const renderCardTypeSelection = () => (
+    <motion.div variants={fadeInUp}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Typography variant="h5" gutterBottom style={{ color: "white" }}>
+          Select Card Type
+        </Typography>
+        <FormControl component="fieldset" error={!!errors.cardType}>
+          <RadioGroup name="cardType" value={formData.cardType} onChange={handleInputChange}>
+            {["Visa", "MasterCard", "American Express", "Discover"].map((type) => (
+              <motion.div key={type} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Paper
+                  sx={{
+                    mb: 2,
+                    p: { xs: 2, sm: 3 },
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                >
+                  <FormControlLabel
+                    value={type}
+                    control={<Radio />}
+                    label={
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <CreditCard />
+                        <Typography>{type}</Typography>
+                      </Box>
+                    }
+                  />
+                </Paper>
+              </motion.div>
+            ))}
+          </RadioGroup>
+          {errors.cardType && (
+            <Typography variant="caption" color="error">
+              {errors.cardType}
+            </Typography>
+          )}
+        </FormControl>
+      </Box>
+    </motion.div>
+  )
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -274,21 +322,21 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
           p: { xs: 2, sm: 3, md: 4 },
           minHeight: { xs: "100vh", sm: "auto" },
           maxHeight: { xs: "100vh", sm: "none" },
-          overflowY: "scroll", // Enable scrolling for Y-axis
-          scrollbarWidth: "thin", // Firefox: Thin scrollbar
-          scrollbarColor: "cyan black", // Firefox: Colors for scrollbar thumb and track
+          overflowY: "scroll",
+          scrollbarWidth: "thin",
+          scrollbarColor: "cyan black",
           "&::-webkit-scrollbar": {
-            width: "8px", // Set the scrollbar width for Chrome, Edge, Safari
+            width: "8px",
           },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "cyan", // Scrollbar thumb color
-            borderRadius: "8px", // Rounded corners for the thumb
+            backgroundColor: "cyan",
+            borderRadius: "8px",
           },
           "&::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "deepskyblue", // Hover effect for thumb
+            backgroundColor: "deepskyblue",
           },
           "&::-webkit-scrollbar-track": {
-            backgroundColor: "black", // Scrollbar track color
+            backgroundColor: "black",
           },
           backgroundColor: "black",
         }}
@@ -298,24 +346,24 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
           sx={{
             mb: 4,
             display: { xs: "none", sm: "flex" },
-            backgroundColor: "rgba(0, 0, 0, 0.8)", // Dark background for desktop stepper
-            borderRadius: "8px", // Rounded corners
-            padding: 2, // Add padding for spacing
-            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow for depth
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            borderRadius: "8px",
+            padding: 2,
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
           }}
         >
           <Step>
             <StepLabel
               sx={{
-                color: "white", // Label text color
+                color: "white",
                 "& .MuiStepIcon-root": {
-                  color: step > 0 ? "cyan" : "gray", // Active/inactive icon colors
+                  color: step > 0 ? "cyan" : "gray",
                 },
                 "& .MuiStepIcon-text": {
-                  fill: "black", // Text inside step icon
+                  fill: "black",
                 },
                 "& .MuiStepLabel-label": {
-                  color: step > 0 ? "cyan" : "gray", // Active/inactive label color
+                  color: step > 0 ? "cyan" : "gray",
                 },
               }}
             >
@@ -368,14 +416,14 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
             alignItems: "center",
             mb: 3,
             padding: 2,
-            backgroundColor: "rgba(0, 0, 0, 0.8)", // Dark background for mobile indicator
-            borderRadius: "8px", // Rounded corners
-            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
-            color: "white", // Text color for readability
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            borderRadius: "8px",
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+            color: "white",
           }}
         >
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Step {step} of 3
+            Step {step} of {formData.paymentMethod === "card" ? "5" : "4"}
           </Typography>
         </Box>
 
@@ -389,8 +437,9 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
             exit="exit"
             style={{ position: "relative" }}
           >
-            {step === 1 && (
-              <motion.div variants={fadeInUp}>
+            {step === 1 &&
+              (
+                <motion.div variants={fadeInUp}>
                 <Box
                   sx={{
                     display: "flex",
@@ -416,6 +465,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                     helperText={errors.name}
                     size={isMobile ? "small" : "medium"}
                   />
+                 
                   <TextField
                     fullWidth
                     label="Email"
@@ -495,7 +545,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                   />
                 </Box>
               </motion.div>
-            )}
+              )}
 
             {step === 2 && (
               <motion.div variants={fadeInUp}>
@@ -503,23 +553,16 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                   <Typography variant="h5" gutterBottom>
                     Payment Method
                   </Typography>
-                  <FormControl
-                    component="fieldset"
-                    error={!!errors.paymentMethod}
-                  >
+                  <FormControl component="fieldset" error={!!errors.paymentMethod}>
                     <RadioGroup
                       name="paymentMethod"
                       value={formData.paymentMethod}
                       onChange={(e) => {
-                        handleInputChange(e);
-                        // Clear payment method error when selection is made
-                        setErrors((prev) => ({ ...prev, paymentMethod: "" }));
+                        handleInputChange(e)
+                        setErrors((prev) => ({ ...prev, paymentMethod: "" }))
                       }}
                     >
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                         <Paper
                           sx={{
                             mb: 2,
@@ -529,9 +572,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                               bgcolor: "action.hover",
                             },
                             border: errors.paymentMethod ? "1px solid" : "none",
-                            borderColor: errors.paymentMethod
-                              ? "error.main"
-                              : "transparent",
+                            borderColor: errors.paymentMethod ? "error.main" : "transparent",
                           }}
                         >
                           <FormControlLabel
@@ -548,10 +589,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                                 <LocalShipping />
                                 <Box>
                                   <Typography>Cash on Delivery</Typography>
-                                  <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                  >
+                                  <Typography variant="caption" color="text.secondary">
                                     Pay when you receive
                                   </Typography>
                                 </Box>
@@ -560,10 +598,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                           />
                         </Paper>
                       </motion.div>
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                         <Paper
                           sx={{
                             p: { xs: 2, sm: 3 },
@@ -572,9 +607,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                               bgcolor: "action.hover",
                             },
                             border: errors.paymentMethod ? "1px solid" : "none",
-                            borderColor: errors.paymentMethod
-                              ? "error.main"
-                              : "transparent",
+                            borderColor: errors.paymentMethod ? "error.main" : "transparent",
                           }}
                         >
                           <FormControlLabel
@@ -591,10 +624,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                                 <CreditCard />
                                 <Box>
                                   <Typography>Credit/Debit Card</Typography>
-                                  <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                  >
+                                  <Typography variant="caption" color="text.secondary">
                                     Secure online payment
                                   </Typography>
                                 </Box>
@@ -631,14 +661,12 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
               </motion.div>
             )}
 
-            {step === 3 && formData.paymentMethod === "card" && (
+            {step === 3 && formData.paymentMethod === "card" && renderCardTypeSelection()}
+
+            {step === 4 && formData.paymentMethod === "card" && (
               <motion.div variants={fadeInUp}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                  <Typography
-                    variant="h5"
-                    gutterBottom
-                    style={{ color: "white" }}
-                  >
+                  <Typography variant="h5" gutterBottom style={{ color: "white" }}>
                     Card Details
                   </Typography>
                   <TextField
@@ -689,14 +717,11 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
               </motion.div>
             )}
 
-            {step === 3 && formData.paymentMethod === "cod" && (
+            {((step === 3 && formData.paymentMethod === "cod") ||
+              (step === 5 && formData.paymentMethod === "card")) && (
               <motion.div variants={fadeInUp}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                  <Typography
-                    variant="h5"
-                    gutterBottom
-                    style={{ color: "white" }}
-                  >
+                  <Typography variant="h5" gutterBottom style={{ color: "white" }}>
                     Confirm Order
                   </Typography>
                   <Paper sx={{ p: { xs: 2, sm: 3 } }}>
@@ -716,14 +741,15 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                       Payment Method:
                     </Typography>
                     <Typography color="text.secondary">
-                      Cash on Delivery
+                      {formData.paymentMethod === "cod" ? "Cash on Delivery" : `${formData.cardType} Card`}
                     </Typography>
                   </Paper>
                 </Box>
               </motion.div>
             )}
 
-            {step === 4 && (
+            {((step === 4 && formData.paymentMethod === "cod") ||
+              (step === 6 && formData.paymentMethod === "card")) && (
               <motion.div variants={fadeInUp}>
                 <Box sx={{ textAlign: "center" }}>
                   <motion.div
@@ -751,11 +777,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                       <Check sx={{ fontSize: { xs: 30, sm: 40 } }} />
                     </Box>
                   </motion.div>
-                  <Typography
-                    variant="h5"
-                    gutterBottom
-                    style={{ color: "white" }}
-                  >
+                  <Typography variant="h5" gutterBottom style={{ color: "white" }}>
                     Order Confirmed!
                   </Typography>
                   <Typography color="text.secondary" paragraph>
@@ -765,8 +787,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                     sx={{
                       p: { xs: 2, sm: 3 },
                       mt: 3,
-                      background:
-                        "linear-gradient(145deg, rgba(187, 134, 252, 0.1), rgba(3, 218, 198, 0.1))",
+                      background: "linear-gradient(145deg, rgba(187, 134, 252, 0.1), rgba(3, 218, 198, 0.1))",
                     }}
                   >
                     <Typography variant="h6" gutterBottom>
@@ -793,9 +814,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                       <Typography>₹{product.shipping}</Typography>
                     </Box>
                     <Divider sx={{ my: 2 }} />
-                    <Box
-                      sx={{ display: "flex", justifyContent: "space-between" }}
-                    >
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                       <Typography variant="subtitle1">Total</Typography>
                       <Typography variant="subtitle1" color="primary">
                         ₹{(Number(product.price) + product.shipping).toFixed(2)}
@@ -815,69 +834,57 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                 flexDirection: { xs: "column", sm: "row" },
               }}
             >
-              {step > 1 && step < 4 && (
-                <Button
-                  variant="outlined"
-                  onClick={handleBack}
-                  fullWidth={isMobile}
-                >
+              {step > 1 && step < (formData.paymentMethod === "card" ? 6 : 4) && (
+                <Button variant="outlined" onClick={handleBack} fullWidth={isMobile}>
                   Back
                 </Button>
               )}
               {step === 1 && (
-                <Button
-                  variant="outlined"
-                  onClick={onClose}
-                  fullWidth={isMobile}
-                >
+                <Button variant="outlined" onClick={onClose} fullWidth={isMobile}>
                   Cancel
                 </Button>
               )}
-              {step < 3 && (
+              {step < (formData.paymentMethod === "card" ? 5 : 3) && (
                 <Button
                   variant="contained"
                   onClick={handleNext}
                   fullWidth={isMobile}
                   sx={{
-                    background:
-                      "linear-gradient(45deg, #BB86FC 30%, #03DAC6 90%)",
+                    background: "linear-gradient(45deg, #BB86FC 30%, #03DAC6 90%)",
                     "&:hover": {
-                      background:
-                        "linear-gradient(45deg, #9965f4 30%, #02b3a9 90%)",
+                      background: "linear-gradient(45deg, #9965f4 30%, #02b3a9 90%)",
                     },
                   }}
                 >
                   Next
                 </Button>
               )}
-              {step === 3 && (
+              {((step === 3 && formData.paymentMethod === "cod") ||
+                (step === 5 && formData.paymentMethod === "card")) && (
                 <Button
                   variant="contained"
                   onClick={handleNext}
                   fullWidth={isMobile}
                   sx={{
-                    background:
-                      "linear-gradient(45deg, #BB86FC 30%, #03DAC6 90%)",
+                    background: "linear-gradient(45deg, #BB86FC 30%, #03DAC6 90%)",
                     "&:hover": {
-                      background:
-                        "linear-gradient(45deg, #9965f4 30%, #02b3a9 90%)",
+                      background: "linear-gradient(45deg, #9965f4 30%, #02b3a9 90%)",
                     },
                   }}
                 >
                   Place Order
                 </Button>
               )}
-              {step === 4 && (
+              {((step === 4 && formData.paymentMethod === "cod") ||
+                (step === 6 && formData.paymentMethod === "card")) && (
                 <Button
                   variant="contained"
                   onClick={onClose}
                   fullWidth={isMobile}
                   sx={{
-                    background:
-                      "linear-gradient(45deg, #BB86FC 30%, #03DAC6 90%)",
+                    background: "linear-gradient(45deg, #BB86FC 30%, #03DAC6 90%)",
                     "&:hover": {
-                      background:
-                        "linear-gradient(45deg, #9965f4 30%, #02b3a9 90%)",
+                      background: "linear-gradient(45deg, #9965f4 30%, #02b3a9 90%)",
                     },
                   }}
                 >
@@ -889,5 +896,6 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
         </AnimatePresence>
       </CardContent>
     </ThemeProvider>
-  );
+  )
 }
+
