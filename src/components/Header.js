@@ -1,3 +1,5 @@
+// Header.js
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Box,
@@ -11,28 +13,25 @@ import {
   Paper,
   Toolbar,
   Typography,
+  Badge,
 } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  ChevronDown,
-  DoorClosedIcon as CloseIcon,
-  MenuIcon,
-} from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { ChevronDown, DoorClosedIcon as CloseIcon, MenuIcon, ShoppingCart } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState(null);
+  const [cartItemCount, setCartItemCount] = useState(0);
 
   const { logout } = useAuth();
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    history('/login');
+    navigate('/login');
   };
 
   const menuItems = [
@@ -50,7 +49,19 @@ function Header() {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      setCartItemCount(cart.reduce((total, item) => total + item.quantity, 0));
+    };
+
+    updateCartCount();
+    window.addEventListener('storage', updateCartCount);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('storage', updateCartCount);
+    };
   }, []);
 
   const toggleDrawer = (open) => (event) => {
@@ -62,6 +73,12 @@ function Header() {
       return;
     }
     setDrawerOpen(open);
+  };
+
+  const handleSubmenuClick = (submenuItem) => {
+    // Filter products based on submenu item
+    // For this example, we'll just navigate to the home page
+    navigate('/' );
   };
 
   return (
@@ -177,6 +194,7 @@ function Header() {
                                       color: 'white',
                                       py: 1,
                                     }}
+                                    onClick={() => handleSubmenuClick(subItem)}
                                   >
                                     {subItem}
                                   </Button>
@@ -193,6 +211,18 @@ function Header() {
 
               {/* Right Menu */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {/* Cart Icon */}
+                <IconButton
+                  color="inherit"
+                  component={Link}
+                  to="/cart"
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <Badge badgeContent={cartItemCount} color="secondary">
+                    <ShoppingCart />
+                  </Badge>
+                </IconButton>
+
                 {/* Logout Button */}
                 <Button
                   variant='outlined'
@@ -272,7 +302,10 @@ function Header() {
                       <ListItem
                         button
                         key={subItem}
-                        onClick={toggleDrawer(false)}
+                        onClick={() => {
+                          handleSubmenuClick(subItem);
+                          setDrawerOpen(false);
+                        }}
                       >
                         <ListItemText
                           primary={subItem}

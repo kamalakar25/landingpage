@@ -20,6 +20,7 @@ import {
   useMediaQuery,
 } from "@mui/material"
 import { ThemeProvider, createTheme } from "@mui/material/styles"
+import { useNavigate } from "react-router-dom"
 
 // Enhanced dark theme
 const darkTheme = createTheme({
@@ -127,6 +128,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
 
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
+  const navigate = useNavigate()
 
   // Validation patterns
   const patterns = {
@@ -270,6 +272,13 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
       setErrors((prev) => ({ ...prev, [name]: error }))
     }
   }
+
+const clearLocalStorage = () => {
+  localStorage.removeItem("cart");
+  onClose();
+  navigate("/"); // Navigate to the homepage
+};
+
 
   const renderCardTypeSelection = () => (
     <motion.div variants={fadeInUp}>
@@ -933,7 +942,7 @@ export default function MultiStepCheckoutForm({ product, onClose }) {
                 (step === 6 && formData.paymentMethod === "card")) && (
                 <Button
                   variant="contained"
-                  onClick={onClose}
+                  onClick={clearLocalStorage}
                   fullWidth={isMobile}
                   sx={{
                     background:

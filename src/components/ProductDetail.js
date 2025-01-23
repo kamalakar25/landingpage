@@ -16,7 +16,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { ArrowBack, Favorite } from "@mui/icons-material";
+import { ArrowBack, Favorite, ShoppingCart } from "@mui/icons-material";
 import { products } from "./product";
 import MultiStepCheckoutForm from "./multi-step-checkout-form";
 
@@ -32,6 +32,33 @@ function ProductDetail() {
   );
   const [isFavorite, setIsFavorite] = useState(false);
   const [openCheckout, setOpenCheckout] = useState(false);
+
+  const addToCart = () => {
+    // Retrieve existing cart items from localStorage
+    const existingCartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    // Check if product already exists in cart
+    const existingProductIndex = existingCartItems.findIndex(
+      (item) => item.id === product.id
+    );
+
+    if (existingProductIndex > -1) {
+      // If product exists, increment quantity
+      existingCartItems[existingProductIndex].quantity += 1;
+    } else {
+      // If product doesn't exist, add new product with quantity 1
+      existingCartItems.push({
+        ...product,
+        quantity: 1,
+      });
+    }
+
+    // Save updated cart back to localStorage
+    localStorage.setItem("cart", JSON.stringify(existingCartItems));
+
+    // Navigate to cart page
+    navigate("/cart");
+  };
 
   if (!product) {
     return (
@@ -50,7 +77,7 @@ function ProductDetail() {
       }}
       style={{
         minHeight: "100vh",
-        alignContent: "center"
+        alignContent: "center",
       }}
     >
       <Box
@@ -178,12 +205,29 @@ function ProductDetail() {
                   variant="contained"
                   color="primary"
                   size="large"
-                  fullWidth
-                  onClick={() => setOpenCheckout(true)}
+                  startIcon={<ShoppingCart />}
                   sx={{
+                    flex: 2,
                     py: 1.5,
                     borderRadius: 2,
                     boxShadow: "0 4px 6px rgba(187, 134, 252, 0.25)",
+                  }}
+                  onClick={addToCart}
+                >
+                  Add to Cart
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  size="large"
+                  sx={{
+                    flex: 1,
+                    py: 1.5,
+                    borderRadius: 2,
+                  }}
+                  onClick={() => {
+                    // Open checkout dialog
+                    setOpenCheckout(true);
                   }}
                 >
                   Buy Now

@@ -14,6 +14,7 @@ import Signup from './components/Signup';
 import { AuthProvider } from './contexts/AuthContext';
 import MobileCoverLandingPage from './MobileCoverLandingPage';
 import theme from './theme';
+import CartPage from './components/CartPage';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
                 </AuthenticatedRoute>
               }
             />
+            <Route path="/cart" element={<CartPage />} />
             {/* Redirect any unmatched routes */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
