@@ -16,7 +16,7 @@ const uspItems = [
   {
     icon: <LocalShipping sx={{ fontSize: 48, color: "secondary.main" }} />,
     title: "Free Shipping",
-    description: "On all orders over $50",
+    description: "On all orders over ₹50",
   },
   {
     icon: <Brush sx={{ fontSize: 48, color: "secondary.main" }} />,

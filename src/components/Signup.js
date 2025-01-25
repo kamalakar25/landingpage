@@ -84,9 +84,9 @@ export default function Signup() {
 
   const onSubmit = async (data) => {
     try {
-      // In a real application, you would send this data to your backend
-      // For this example, we'll just simulate a successful signup
-      await login({ email: data.email, name: data.name });
+      const userData = { email: data.email, name: data.name };
+      await login(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
       navigate("/");
     } catch (error) {
       console.error("Signup failed:", error);

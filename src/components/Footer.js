@@ -39,7 +39,7 @@ function Footer() {
                 textAlign: 'center',
               }}
             >
-              MobileCover
+              CoverCraft
             </Typography>
             <Typography
               variant='body2'
@@ -156,7 +156,7 @@ function Footer() {
               component='span'
               sx={{ fontWeight: 'bold', color: 'primary.main' }}
             >
-              MobileCover
+              CoverCraft
             </Typography>
             . All rights reserved.
           </Typography>

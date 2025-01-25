@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -19,35 +19,17 @@ import { useAuth } from "../contexts/AuthContext";
 import AuthLayout from "./AuthLayout";
 import { motion } from "framer-motion";
 
+const AUTO_LOGOUT_TIME = 60 * 1000; // 1 minute in milliseconds
+
 const schema = yup.object().shape({
   email: yup
     .string()
     .email("Please enter a valid email address")
-    .required("Email is required")
-    .test("is-valid-domain", "Please use a valid email domain", (value) => {
-      if (!value) return false;
-      const domain = value.split("@")[1];
-      if (!domain) return false;
-
-      const domainParts = domain.split(".");
-      if (domainParts.length < 2) return false; // Ensure both domain and TLD are present
-
-      const topLevelDomain = domainParts[domainParts.length - 1];
-      return (
-        !domain.startsWith("example.") &&
-        !domain.endsWith(".test") &&
-        /^[a-zA-Z.-]+$/.test(domain) && // Allow alphanumeric, dots, and hyphens in domain
-        topLevelDomain.length >= 2 // Ensure the TLD is at least 2 characters long
-      );
-    }),
+    .required("Email is required"),
   password: yup
     .string()
     .required("Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-    ),
+    .min(8, "Password must be at least 8 characters"),
 });
 
 const Login = () => {
@@ -59,22 +41,69 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
-  const { login, user } = useAuth();
+  const { login, logout, user } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true); // New state for auth check
+  const logoutTimerRef = useRef(null);
 
   useEffect(() => {
-    if (user) {
-      navigate("/");
+    // Check localStorage for existing user on component mount
+    const savedUser = localStorage.getItem("user");
+    if (savedUser && !user) {
+      const userData = JSON.parse(savedUser);
+      login(userData);
     }
-  }, [user, navigate]);
+
+    setIsCheckingAuth(false); // Auth check complete
+
+    if (user) {
+      resetLogoutTimer();
+      window.addEventListener("mousemove", resetLogoutTimer);
+      window.addEventListener("keydown", resetLogoutTimer);
+      window.addEventListener("click", resetLogoutTimer);
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+
+      return () => {
+        window.removeEventListener("mousemove", resetLogoutTimer);
+        window.removeEventListener("keydown", resetLogoutTimer);
+        window.removeEventListener("click", resetLogoutTimer);
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+        clearTimeout(logoutTimerRef.current);
+      };
+    }
+  }, [user, login]);
+
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === "visible") {
+      resetLogoutTimer();
+    }
+  };
+
+  const resetLogoutTimer = () => {
+    if (logoutTimerRef.current) {
+      clearTimeout(logoutTimerRef.current);
+    }
+    logoutTimerRef.current = setTimeout(() => {
+      handleLogout();
+    }, AUTO_LOGOUT_TIME);
+  };
+
+  const handleLogout = () => {
+    logout();
+    localStorage.removeItem("user");
+    navigate("/login");
+    alert("You have been logged out due to inactivity.");
+  };
 
   const onSubmit = async (data) => {
     try {
-      await login({ email: data.email, name: data.email.split("@")[0] });
+      const userData = { email: data.email, name: data.email.split("@")[0] };
+      await login(userData);
+      localStorage.setItem("user", JSON.stringify(userData)); // Persist user to localStorage
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error);
@@ -89,6 +118,17 @@ const Login = () => {
       transition: { duration: 0.5, ease: "easeOut" },
     },
   };
+
+  // Show a loading state while checking authentication
+  if (isCheckingAuth) {
+    return <Typography align="center">Checking authentication...</Typography>;
+  }
+
+  // Redirect to home if user is already logged in
+  if (user) {
+    navigate("/");
+    return null;
+  }
 
   return (
     <AuthLayout>

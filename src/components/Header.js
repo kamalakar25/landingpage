@@ -31,44 +31,44 @@ function Header() {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   const menuItems = [
     {
-      name: 'Shop',
-      submenu: ['New Arrivals', 'Best Sellers', 'Collections', 'Customized'],
+      name: "Shop",
+      submenu: ["New Arrivals", "Best Sellers", "Collections", "Customized"],
     },
-    { name: 'Devices', submenu: ['iPhone', 'Samsung', 'iPad', 'AirPods'] },
-    { name: 'About' },
-    { name: 'Contact' },
+    { name: "Devices", submenu: ["iPhone", "Samsung",] },
+    { name: "About" },
+    { name: "Contact" },
   ];
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     const updateCartCount = () => {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
       setCartItemCount(cart.reduce((total, item) => total + item.quantity, 0));
     };
 
     updateCartCount();
-    window.addEventListener('storage', updateCartCount);
+    window.addEventListener("storage", updateCartCount);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('storage', updateCartCount);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("storage", updateCartCount);
     };
   }, []);
 
   const toggleDrawer = (open) => (event) => {
     if (
       event &&
-      event.type === 'keydown' &&
-      (event.key === 'Tab' || event.key === 'Shift')
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
     ) {
       return;
     }
@@ -76,9 +76,8 @@ function Header() {
   };
 
   const handleSubmenuClick = (submenuItem) => {
-    // Filter products based on submenu item
-    // For this example, we'll just navigate to the home page
-    navigate('/' );
+    // Navigate to a page with filtered products
+    navigate(`/category/${submenuItem.replace(/\s+/g, '-').toLowerCase()}`);
   };
 
   return (
@@ -86,38 +85,38 @@ function Header() {
       <motion.div
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ type: 'spring', stiffness: 120 }}
+        transition={{ type: "spring", stiffness: 120 }}
       >
         <AppBar
-          position='fixed'
+          // position="fixed"
           sx={{
-            background: isScrolled
-              ? 'rgba(37, 38, 64, 0.9)'
-              : 'rgba(37, 38, 64, 0)',
-            backdropFilter: isScrolled ? 'blur(10px)' : 'none',
-            boxShadow: isScrolled ? '0 4px 30px rgba(0, 0, 0, 0.1)' : 'none',
-            transition: 'all 0.3s ease',
+            background: "rgba(37, 38, 64, 0.9)",
+
+            // backdropFilter: isScrolled ? "blur(10px)" : "none",
+            // boxShadow: isScrolled ? "0 4px 30px rgba(0, 0, 0, 0.1)" : "none",
+            transition: "all 0.3s ease",
           }}
         >
-          <Container maxWidth='xl'>
-            <Toolbar sx={{ py: 1, justifyContent: 'space-between' }}>
+          <Container maxWidth="xl">
+            <Toolbar sx={{ py: 1, justifyContent: "space-between" }}>
               {/* Logo */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Typography
-                  variant='h5'
-                  component='div'
+                  variant="h5"
+                  component="div"
                   sx={{
                     flexGrow: 1,
-                    fontWeight: 'bold',
-                    background: 'linear-gradient(45deg, #7B68EE, #FF69B4)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
+                    fontWeight: "bold",
+                    background: "linear-gradient(45deg, #7B68EE, #FF69B4)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
                   }}
+                  onClick={() => {navigate("/")}}
                 >
-                  MobileCover
+                  CoverCraft
                 </Typography>
               </motion.div>
 
@@ -125,8 +124,8 @@ function Header() {
               <Box
                 sx={{
                   flexGrow: 1,
-                  display: { xs: 'none', md: 'flex' },
-                  justifyContent: 'center',
+                  display: { xs: "none", md: "flex" },
+                  justifyContent: "center",
                   gap: 4,
                 }}
               >
@@ -135,14 +134,14 @@ function Header() {
                     key={item.name}
                     onMouseEnter={() => setActiveMenuItem(item.name)}
                     onMouseLeave={() => setActiveMenuItem(null)}
-                    sx={{ position: 'relative' }}
+                    sx={{ position: "relative" }}
                   >
                     <motion.div whileHover={{ y: -2 }}>
                       <Button
                         sx={{
-                          color: 'white',
-                          display: 'flex',
-                          alignItems: 'center',
+                          color: "white",
+                          display: "flex",
+                          alignItems: "center",
                           gap: 0.5,
                         }}
                       >
@@ -161,10 +160,10 @@ function Header() {
                             exit={{ opacity: 0, y: 20 }}
                             transition={{ duration: 0.2 }}
                             style={{
-                              position: 'absolute',
-                              top: '100%',
-                              left: '50%',
-                              transform: 'translateX(-50%)',
+                              position: "absolute",
+                              top: "100%",
+                              left: "50%",
+                              transform: "translateX(-50%)",
                               zIndex: 1000,
                             }}
                           >
@@ -172,9 +171,9 @@ function Header() {
                               sx={{
                                 mt: 1,
                                 p: 1,
-                                background: 'rgba(37, 38, 64, 0.95)',
-                                backdropFilter: 'blur(10px)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                background: "rgba(37, 38, 64, 0.95)",
+                                backdropFilter: "blur(10px)",
+                                border: "1px solid rgba(255, 255, 255, 0.1)",
                                 minWidth: 200,
                               }}
                             >
@@ -183,15 +182,15 @@ function Header() {
                                   key={subItem}
                                   whileHover={{ x: 5 }}
                                   transition={{
-                                    type: 'spring',
+                                    type: "spring",
                                     stiffness: 300,
                                   }}
                                 >
                                   <Button
                                     fullWidth
                                     sx={{
-                                      justifyContent: 'flex-start',
-                                      color: 'white',
+                                      justifyContent: "flex-start",
+                                      color: "white",
                                       py: 1,
                                     }}
                                     onClick={() => handleSubmenuClick(subItem)}
@@ -210,13 +209,13 @@ function Header() {
               </Box>
 
               {/* Right Menu */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                 {/* Cart Icon */}
                 <IconButton
                   color="inherit"
                   component={Link}
                   to="/cart"
-                  sx={{ display: 'flex', alignItems: 'center' }}
+                  sx={{ display: "flex", alignItems: "center" }}
                 >
                   <Badge badgeContent={cartItemCount} color="secondary">
                     <ShoppingCart />
@@ -225,20 +224,20 @@ function Header() {
 
                 {/* Logout Button */}
                 <Button
-                  variant='outlined'
-                  color='error'
+                  variant="outlined"
+                  color="error"
                   onClick={handleLogout}
                   sx={{
-                    display: { xs: 'none', md: 'inline-flex' },
+                    display: { xs: "none", md: "inline-flex" },
                   }}
                 >
                   Logout
                 </Button>
 
                 {/* Mobile Menu Button */}
-                <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                <Box sx={{ display: { xs: "block", md: "none" } }}>
                   <IconButton
-                    color='inherit'
+                    color="inherit"
                     onClick={toggleDrawer(true)}
                     sx={{ ml: 1 }}
                   >
@@ -253,31 +252,35 @@ function Header() {
 
       {/* Mobile Drawer */}
       <Drawer
-        anchor='right'
+        anchor="right"
         open={drawerOpen}
         onClose={toggleDrawer(false)}
         PaperProps={{
           sx: {
-            width: '100%',
+            width: "100%",
             maxWidth: 350,
-            background: 'rgba(37, 38, 64, 0.98)',
-            backdropFilter: 'blur(10px)',
+            background: "rgba(37, 38, 64, 0.98)",
+            backdropFilter: "blur(10px)",
           },
         }}
       >
         <Box sx={{ p: 2 }}>
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
               mb: 2,
             }}
           >
-            <Typography variant='h6' sx={{ color: 'white' }}>
+            <Typography variant="h6" sx={{ color: "white" }}>
               Menu
             </Typography>
-            <IconButton color='inherit' onClick={toggleDrawer(false)} style={{width: "80px"}}>
+            <IconButton
+              color="inherit"
+              onClick={toggleDrawer(false)}
+              style={{ width: "80px" }}
+            >
               <CloseIcon />
             </IconButton>
           </Box>
@@ -293,7 +296,7 @@ function Header() {
                     }
                   }}
                 >
-                  <ListItemText primary={item.name} sx={{ color: 'white' }} />
+                  <ListItemText primary={item.name} sx={{ color: "white" }} />
                   {item.submenu && <ChevronDown size={16} />}
                 </ListItem>
                 {item.submenu && (
@@ -309,7 +312,7 @@ function Header() {
                       >
                         <ListItemText
                           primary={subItem}
-                          sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
+                          sx={{ color: "rgba(255, 255, 255, 0.7)" }}
                         />
                       </ListItem>
                     ))}
@@ -318,7 +321,7 @@ function Header() {
               </React.Fragment>
             ))}
             <ListItem button onClick={handleLogout}>
-              <ListItemText primary='Logout' sx={{ color: 'white' }} />
+              <ListItemText primary="Logout" sx={{ color: "white" }} />
             </ListItem>
           </List>
         </Box>
