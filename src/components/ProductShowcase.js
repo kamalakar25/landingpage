@@ -72,6 +72,7 @@ function ProductShowcase({ category }) {
 
   return (
     <Box
+      id= "productshowcase"
       sx={{
         py: 4,
         px: 2,
@@ -80,6 +81,7 @@ function ProductShowcase({ category }) {
         bgcolor: 'background.default',
         borderRadius: 2,
         boxShadow: 3,
+        
       }}
     >
       <Typography
